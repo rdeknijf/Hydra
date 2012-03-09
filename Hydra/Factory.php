@@ -32,21 +32,23 @@ class Factory {
 
             //. dispatch worker
 
+            //exec('psexec -d php Hydra/WorkerBootstrap.php -t ' . $task->getGuid(), $out);
+
+            $this->execInBackground('php Hydra/WorkerBootstrap.php -t ' . $task->getGuid());
 
         }
 
-        foreach ($this->tasks as $task) {
+        // psexec -d php Hydra/WorkerBootstrap.php -t 811ddcba8d474fff574d400775eb30e9
+        // start /B php Hydra/WorkerBootstrap.php -t 811ddcba8d474fff574d400775eb30e9
 
-            exec('psexec -d php Hydra/WorkerBootstrap.php', $out);
+        sleep(1);
 
-            echo $out;
+        //<=== HERE, tasks are done now, get the results back here
+        // and build in a sleeper until everything is done, or until a timer runs out
 
-        }
-
-
-
-        sleep(6);
         echo microtime(true) - $start;
+
+
 
 
         //return $output;

@@ -25,11 +25,16 @@ class SqliteMedium implements Medium {
      *
      * @return Task
      */
-    public function claimTask() {
+    public function claimTask($task_id) {
 
-        return unserialize(base64_decode($this->getRepo()->querySingle("SELECT task FROM tasks WHERE resolved = '0'")));
+        $row = $this->getRepo()->query("SELECT task FROM tasks WHERE id='" . $task_id . "'")->fetchArray(SQLITE3_ASSOC);;
+
+        return unserialize(base64_decode($row['task']));
 
     }
+
+
+
 
     public function resolveTask(Task $task) {
 

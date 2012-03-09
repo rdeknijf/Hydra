@@ -11,7 +11,7 @@ namespace Hydra;
 interface Medium {
 
     public function addTask(Task $task);
-    public function claimTask();
+    public function claimTask($task_id);
     public function resolveTask(Task $task);
     public function removeTask($taskOrId);
     public function isTaskResolved($taskOrId);

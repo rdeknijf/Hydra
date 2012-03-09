@@ -13,8 +13,6 @@ $tasks = array(
 );
 
 
-
-
 $mother = new Factory();
 $mother->addTasks($tasks);
 

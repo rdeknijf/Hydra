@@ -12,7 +12,7 @@ class Worker {
 
     //private $medium;
 
-    public function __construct() {
+    public function __construct($task_id = null) {
 
         $fName = "act/inWorker." . rand(50, 1000);
         $fHandle = fopen($fName, 'w') or die("can't open file");
@@ -23,10 +23,12 @@ class Worker {
 
         //. pick up task
 
-        $task = $medium->claimTask();
+        fwrite($fHandle, " => $task_id <= ");
+        fwrite($fHandle, 'preclaim ');
 
-        //fwrite($fHandle, $task->getGuid());
+        $task = $medium->claimTask($task_id);
 
+        fwrite($fHandle, 'postclaim ');
 
 
         if ($task) {
