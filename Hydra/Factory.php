@@ -10,9 +10,17 @@ namespace Hydra;
  */
 class Factory {
 
+    /**
+     * @var SqliteMedium The medium (Sqlite Database) used by this factory
+     */
+    private $medium;
     public $tasks;
 
     public function execute() {
+
+
+
+        $sleep = 100000;
 
         $start = microtime(true);
 
@@ -25,40 +33,81 @@ class Factory {
         foreach ($this->tasks as $task) {
 
             //. add task to medium
+            $this->getMedium()->addTask($task);
 
-            $medium = new SqliteMedium;
+            //usleep($sleep);
+        }
 
-            $medium->addTask($task);
+
+        foreach ($this->tasks as $task) {
 
             //. dispatch worker
 
-            //exec('psexec -d php Hydra/WorkerBootstrap.php -t ' . $task->getGuid(), $out);
-
             $this->execInBackground('php Hydra/WorkerBootstrap.php -t ' . $task->getGuid());
+
+            //usleep($sleep);
 
         }
 
-        // psexec -d php Hydra/WorkerBootstrap.php -t 811ddcba8d474fff574d400775eb30e9
-        // start /B php Hydra/WorkerBootstrap.php -t 811ddcba8d474fff574d400775eb30e9
-
-        sleep(1);
-
-        //<=== HERE, tasks are done now, get the results back here
-        // and build in a sleeper until everything is done, or until a timer runs out
-
-        echo microtime(true) - $start;
 
 
 
+        return $this->getResults();
 
-        //return $output;
+        //echo microtime(true) - $start;
+
+
     }
 
-//    private function executeTask(Task $task) {
-//
-//
-//
-//    }
+    public function getResults() {
+
+        $maxWaitSecs = 60;
+        $waitedSecs = 0;
+        $defSleepMSecs = 100000;
+
+
+        while ($waitedSecs < $maxWaitSecs) {
+
+            usleep($defSleepMSecs);
+
+            $waitedSecs += ($defSleepMSecs / 1000000);
+
+            $unresolvedCount = count($this->tasks);
+
+            foreach ($this->tasks as $task) {
+
+                $unresolvedCount -= $this->getMedium()->isTaskResolved($task);
+            }
+
+            if ($unresolvedCount == 0) {
+
+                foreach ($this->tasks as &$task) {
+
+                    $task = $this->getMedium()->getTask($task);
+                }
+
+                return $this->tasks;
+            }
+        }
+
+        $dbFile = sys_get_temp_dir() . '/hydra.db';
+
+
+        //var_dump(fileperms($dbFile));
+
+        //exec('rm ' . sys_get_temp_dir() . '/hydra.db' );
+
+        //usleep($defSleepMSecs);
+        //$this->destroyMedium();
+        return false;
+    }
+
+    private function destroyMedium() {
+
+        $this->getMedium()->destroy();
+
+    }
+
 
     public function addTask(Task $task) {
 
@@ -77,6 +126,19 @@ class Factory {
         } else {
             exec($cmd . " > /dev/null &");
         }
+    }
+
+    /**
+     *
+     * @return SqliteMedium
+     */
+    private function getMedium() {
+
+        if (!$this->medium)
+            //$this->medium = new SqliteMedium;
+            $this->medium = new MemcacheMedium;
+
+        return $this->medium;
     }
 
 }

@@ -19,16 +19,16 @@ class Worker {
 
 
 
-        $medium = new SqliteMedium;
+        $medium = new MemcacheMedium;
 
         //. pick up task
 
         fwrite($fHandle, " => $task_id <= ");
-        fwrite($fHandle, 'preclaim ');
+        fwrite($fHandle, 'pre-get ');
 
-        $task = $medium->claimTask($task_id);
+        $task = $medium->getTask($task_id);
 
-        fwrite($fHandle, 'postclaim ');
+        fwrite($fHandle, 'post-get ');
 
 
         if ($task) {
@@ -51,6 +51,7 @@ class Worker {
             //. save results
 
             $task->setOutput($output);
+            $task->setResolved();
             $medium->resolveTask($task);
 
             //. die

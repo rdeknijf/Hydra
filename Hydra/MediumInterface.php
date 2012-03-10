@@ -8,12 +8,12 @@ namespace Hydra;
  * @author Rutger de Knijf
  * @package Hydra
  */
-interface Medium {
+interface MediumInterface {
 
     public function addTask(Task $task);
-    public function claimTask($task_id);
     public function resolveTask(Task $task);
-    public function removeTask($taskOrId);
+    //public function removeTask($taskOrId);
     public function isTaskResolved($taskOrId);
+    public function getTask($taskOrId);
 
 }

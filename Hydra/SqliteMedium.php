@@ -8,11 +8,13 @@ namespace Hydra;
  * @author Rutger de Knijf
  * @package Hydra
  */
-class SqliteMedium implements Medium {
+class SqliteMedium extends MediumBase {
 
-    private $repo;
+    private $busyTimeOutMsec = 50;
 
     public function addTask(Task $task) {
+
+        $this->getRepo()->busyTimeout($this->busyTimeOutMsec);
 
         $sql = sprintf("INSERT INTO tasks ( id, task ) VALUES ('%s','%s')", $task->getGuid(), base64_encode(serialize($task)));
 
@@ -20,23 +22,9 @@ class SqliteMedium implements Medium {
 
     }
 
-
-    /**
-     *
-     * @return Task
-     */
-    public function claimTask($task_id) {
-
-        $row = $this->getRepo()->query("SELECT task FROM tasks WHERE id='" . $task_id . "'")->fetchArray(SQLITE3_ASSOC);;
-
-        return unserialize(base64_decode($row['task']));
-
-    }
-
-
-
-
     public function resolveTask(Task $task) {
+
+        $this->getRepo()->busyTimeout($this->busyTimeOutMsec);
 
         $sql = sprintf("UPDATE tasks SET task='%s',resolved=1 WHERE id='%s'", base64_encode(serialize($task)), $task->getGuid());
 
@@ -48,37 +36,25 @@ class SqliteMedium implements Medium {
 
         $id = ($taskOrId instanceof Task) ? $id = $taskOrId->getGuid () : $taskOrId;
 
+        $this->getRepo()->busyTimeout($this->busyTimeOutMsec);
+
         $this->getRepo()->exec(sprintf("DELETE FROM tasks WHERE id = '%s'", $id));
 
     }
 
     public function isTaskResolved($taskOrId){
 
+        $this->getRepo()->busyTimeout($this->busyTimeOutMsec);
+
         $id = ($taskOrId instanceof Task) ? $id = $taskOrId->getGuid () : $taskOrId;
 
-        $sql = sprintf("SELECT resolved FROM tasks WHERE id = '%s'", $id);
-
-        return $this->getRepo()->querySingle($sql);
+        return $this->getRepo()->querySingle("SELECT resolved FROM tasks WHERE id = '$id'");
 
     }
 
+    protected function initRepo() {
 
-
-    /**
-     *
-     * @return SQLite3
-     */
-    private function getRepo() {
-
-        if (!$this->repo)
-            return $this->initRepo();
-
-        return $this->repo;
-    }
-
-    private function initRepo() {
-
-        $this->repo = new \SQLite3('sqlite.db');
+        $this->repo = new \SQLite3(sys_get_temp_dir() . '/hydra.db');
         $this->repo->query("
 
             CREATE TABLE IF NOT EXISTS tasks (
@@ -92,6 +68,27 @@ class SqliteMedium implements Medium {
 
 
         return $this->repo;
+    }
+
+    public function getTask($taskOrId) {
+
+        $taskId = ($taskOrId instanceof Task) ? $taskId = $taskOrId->getGuid () : $taskOrId;
+
+        $this->getRepo()->busyTimeout($this->busyTimeOutMsec);
+
+        $row = $this->getRepo()->query("SELECT task FROM tasks WHERE id='" . $taskId . "'")->fetchArray(SQLITE3_ASSOC);;
+
+        return unserialize(base64_decode($row['task']));
+
+
+    }
+
+    public function destroy() {
+
+        $this->getRepo->close();
+
+        //exec('rm ' . sys_get_temp_dir() . '/hydra.db' );
+
     }
 
 }

@@ -66,4 +66,10 @@ class Task {
 
     }
 
+    public function setResolved($bool = true) {
+
+        $this->resolved = $bool;
+
+    }
+
 }
