@@ -19,7 +19,7 @@ class Task {
 
     public $resolved = false;
 
-    public function __construct($script = null) {
+    public function __construct($script = null, $args = null) {
 
         $this->guid = $this->generateGuid();
 

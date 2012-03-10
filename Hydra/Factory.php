@@ -10,21 +10,37 @@ namespace Hydra;
  */
 class Factory {
 
+    private $verbosity;
+
+    private $logger;
+
+    private $mediumType;
+
     /**
      * @var SqliteMedium The medium (Sqlite Database) used by this factory
      */
     private $medium;
     public $tasks;
 
+    public function __construct($mediumType = 'Memcache') {
+
+        $this->verbosity = 1;
+
+        $this->mediumType = $mediumType;
+
+        $this->log('Constructed');
+
+    }
+
     public function execute() {
 
-
+        $this->log('Executing');
 
         $sleep = 100000;
 
         $start = microtime(true);
 
-
+        $taskCount = count($this->tasks);
 
         //$memcache = new \Memcache;
         //$memcache->connect('localhost', 11211) or die("Could not connect");
@@ -38,18 +54,20 @@ class Factory {
             //usleep($sleep);
         }
 
+        $this->log("Added $taskCount tasks to medium");
+
 
         foreach ($this->tasks as $task) {
 
             //. dispatch worker
 
-            $this->execInBackground('php Hydra/WorkerBootstrap.php -t ' . $task->getGuid());
+            $this->execInBackground('php Hydra/WorkerBootstrap.php -m '. $this->mediumType .' -t ' . $task->getGuid() . ' -v 1');
 
             //usleep($sleep);
 
         }
 
-
+        $this->log("Executed $taskCount workers");
 
 
         return $this->getResults();
@@ -60,6 +78,8 @@ class Factory {
     }
 
     public function getResults() {
+
+        $this->log('Started getResults()');
 
         $maxWaitSecs = 5;
         $waitedSecs = 0;
@@ -88,9 +108,15 @@ class Factory {
 
                 return $this->tasks;
             }
+
+            if (ctype_digit((string)$waitedSecs))
+                $this->log("Waited for $waitedSecs seconds");
+
         }
 
-        $dbFile = sys_get_temp_dir() . '/hydra.db';
+        $this->log("Timeout of $maxWaitSecs seconds reached, aborting.");
+
+        //$dbFile = sys_get_temp_dir() . '/hydra.db';
 
 
         //var_dump(fileperms($dbFile));
@@ -134,10 +160,31 @@ class Factory {
      */
     private function getMedium() {
 
-        if (!$this->medium)
-            $this->medium = new Medium\Memcache;
+        if (!$this->medium) {
+
+            $name = 'Hydra\\Medium\\' . $this->mediumType;
+
+            $this->medium = new $name();
+
+        }
 
         return $this->medium;
+    }
+
+    private function log($string) {
+
+        if ($this->verbosity) {
+
+            if (!$this->logger) {
+                $this->logger = new Logger;
+                $this->logger->log('-----------------------------------------');
+
+            }
+
+            $this->logger->log('Hydra Factory: ' . $string);
+
+        }
+
     }
 
 }

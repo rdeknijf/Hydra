@@ -8,6 +8,6 @@ fclose($fHandle);
 
 spl_autoload_register();
 
-$options = getopt('t:');
+$options = getopt('m:t:v:');
 
-$worker = new Worker($options['t']);
+$worker = new Worker($options['m'],$options['t'],$options['v']);

@@ -10,42 +10,43 @@ namespace Hydra;
  */
 class Worker {
 
+    private $mediumType;
+    private $logger;
+
+    private $verbosity;
+
     private $medium;
 
-    public function __construct($task_id = null) {
+    public function __construct($mediumType = 'Memcache', $task_id = null, $verbosity = 0) {
 
-//        $fName = "act/inWorker." . rand(50, 1000);
-//        $fHandle = fopen($fName, 'w') or die("can't open file");
+        $this->verbosity = $verbosity;
+        $this->mediumType = $mediumType;
 
 
-        //. pick up task
+        $this->log('Started');
 
-//        fwrite($fHandle, " => $task_id <= ");
-//        fwrite($fHandle, 'pre-get ');
-
+        //. get task
         $task = $this->getMedium()->getTask($task_id);
 
-//        fwrite($fHandle, 'post-get ');
 
 
         if ($task) {
 
-//            fwrite($fHandle, 'task found');
-//            fwrite($fHandle, serialize($task));
-//
-//            fwrite($fHandle, 'task dumped');
+            $this->log('Retrieved task; executing');
 
-            //. execute it
-
+            //. execute
             $output = Array();
             //$return_var = 'something';
 
+
+            //<=== HERE add processing of arguments
+
             exec('php ' . $task->getScript(), &$output);
 
-//            fwrite($fHandle, 'something');
-//            fwrite($fHandle, implode(' ', $output));
 
             //. save results
+
+            $this->log('Task finished, saving output');
 
             $task->setOutput($output);
             $task->setResolved();
@@ -55,20 +56,39 @@ class Worker {
 
         } else {
 
-            //echo 'Did not receive task from Medium';
+            $this->log('Did not retrieve task, aborting worker');
+
         }
 
-//        fwrite($fHandle, 'end');
-//
-//        fclose($fHandle);
+
 
     }
 
     private function getMedium() {
 
-        if(!$this->medium) $this->medium = new Medium\Memcache;
+
+
+        if (!$this->medium) {
+
+            $name = 'Hydra\\Medium\\' . $this->mediumType;
+
+            $this->medium = new $name();
+//var_dump($this->mediumType);
+        }
 
         return $this->medium;
+
+    }
+
+    private function log($string) {
+
+        if ($this->verbosity) {
+
+            if (!$this->logger) $this->logger = new Logger;
+
+            $this->logger->log('Hydra Worker : ' . $string);
+
+        }
 
     }
 
