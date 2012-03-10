@@ -1,6 +1,8 @@
 <?php
 
-namespace Hydra;
+namespace Hydra\Medium;
+
+use Hydra\Task;
 
 /**
  * Description of SqliteMedium
@@ -8,7 +10,7 @@ namespace Hydra;
  * @author Rutger de Knijf
  * @package Hydra
  */
-class SqliteMedium extends MediumBase {
+class Sqlite3 extends Base {
 
     private $busyTimeOutMsec = 50;
 

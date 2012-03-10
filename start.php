@@ -4,7 +4,7 @@ namespace Hydra;
 
 spl_autoload_register();
 
-set_time_limit(60);
+set_time_limit(10);
 
 $start = microtime(true);
 
@@ -24,7 +24,7 @@ $start = microtime(true);
 
 
 
-for ($i = 0; $i < 1000; $i++) {
+for ($i = 0; $i < 5; $i++) {
 
     $tasks[] = new Task(realpath(__DIR__ . '/script.php'));
 

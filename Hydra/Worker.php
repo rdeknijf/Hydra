@@ -10,49 +10,46 @@ namespace Hydra;
  */
 class Worker {
 
-    //private $medium;
+    private $medium;
 
     public function __construct($task_id = null) {
 
-        $fName = "act/inWorker." . rand(50, 1000);
-        $fHandle = fopen($fName, 'w') or die("can't open file");
+//        $fName = "act/inWorker." . rand(50, 1000);
+//        $fHandle = fopen($fName, 'w') or die("can't open file");
 
-
-
-        $medium = new MemcacheMedium;
 
         //. pick up task
 
-        fwrite($fHandle, " => $task_id <= ");
-        fwrite($fHandle, 'pre-get ');
+//        fwrite($fHandle, " => $task_id <= ");
+//        fwrite($fHandle, 'pre-get ');
 
-        $task = $medium->getTask($task_id);
+        $task = $this->getMedium()->getTask($task_id);
 
-        fwrite($fHandle, 'post-get ');
+//        fwrite($fHandle, 'post-get ');
 
 
         if ($task) {
 
-            fwrite($fHandle, 'task found');
-            fwrite($fHandle, serialize($task));
-
-            fwrite($fHandle, 'task dumped');
+//            fwrite($fHandle, 'task found');
+//            fwrite($fHandle, serialize($task));
+//
+//            fwrite($fHandle, 'task dumped');
 
             //. execute it
 
             $output = Array();
-            $return_var = 'something';
+            //$return_var = 'something';
 
-            exec('php ' . $task->getScript(), &$output, &$return_var);
+            exec('php ' . $task->getScript(), &$output);
 
-            fwrite($fHandle, 'something');
-            fwrite($fHandle, implode(' ', $output));
+//            fwrite($fHandle, 'something');
+//            fwrite($fHandle, implode(' ', $output));
 
             //. save results
 
             $task->setOutput($output);
             $task->setResolved();
-            $medium->resolveTask($task);
+            $this->getMedium()->resolveTask($task);
 
             //. die
 
@@ -61,9 +58,17 @@ class Worker {
             //echo 'Did not receive task from Medium';
         }
 
-        fwrite($fHandle, 'end');
+//        fwrite($fHandle, 'end');
+//
+//        fclose($fHandle);
 
-        fclose($fHandle);
+    }
+
+    private function getMedium() {
+
+        if(!$this->medium) $this->medium = new Medium\Memcache;
+
+        return $this->medium;
 
     }
 

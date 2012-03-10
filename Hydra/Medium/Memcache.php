@@ -1,6 +1,8 @@
 <?php
 
-namespace Hydra;
+namespace Hydra\Medium;
+
+use Hydra\Task;
 
 /**
  * Description of Medium
@@ -8,7 +10,7 @@ namespace Hydra;
  * @author Rutger de Knijf
  * @package Hydra
  */
-class MemcacheMedium extends MediumBase {
+class Memcache extends Base {
 
     protected $repo;
 

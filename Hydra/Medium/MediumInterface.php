@@ -1,6 +1,8 @@
 <?php
 
-namespace Hydra;
+namespace Hydra\Medium;
+
+use Hydra\Task;
 
 /**
  * Description of Medium

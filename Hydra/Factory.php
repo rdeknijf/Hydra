@@ -61,7 +61,7 @@ class Factory {
 
     public function getResults() {
 
-        $maxWaitSecs = 60;
+        $maxWaitSecs = 5;
         $waitedSecs = 0;
         $defSleepMSecs = 100000;
 
@@ -135,8 +135,7 @@ class Factory {
     private function getMedium() {
 
         if (!$this->medium)
-            //$this->medium = new SqliteMedium;
-            $this->medium = new MemcacheMedium;
+            $this->medium = new Medium\Memcache;
 
         return $this->medium;
     }

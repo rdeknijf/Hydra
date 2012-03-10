@@ -1,6 +1,8 @@
 <?php
 
-namespace Hydra;
+namespace Hydra\Medium;
+
+use Hydra\Task;
 
 /**
  * Description of MediumBase
@@ -8,7 +10,7 @@ namespace Hydra;
  * @author Rutger de Knijf
  * @package Hydra
  */
-abstract class MediumBase implements MediumInterface {
+abstract class Base implements MediumInterface {
 
     protected $repo;
 
