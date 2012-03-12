@@ -3,23 +3,48 @@
 namespace Hydra;
 
 /**
- * Description of Mother
+ * Management class
+ * You instantiate this class and add tasks to it,
+ * the if you execute() this class it will execute all tasks
  *
  * @author Rutger de Knijf
  * @package Hydra
  */
 class Factory {
 
+
+    /**
+     * Level of verbosity
+     * 0 = off
+     * 1 = on
+     * 2 = not implemented atm
+     * @var int
+     */
     private $verbosity;
 
+
+    /**
+     * Logger class, used by factory to log messages to system log
+     * @var Logger
+     */
     private $logger;
 
+
+    /**
+     * String defining the medium used as the intermediary, can be Memcache or Sqlite3 at the moment
+     * @var type
+     */
     private $mediumType;
 
     /**
-     * @var SqliteMedium The medium (Sqlite Database) used by this factory
+     * @var SqliteMedium The medium (Sqlite3 or Memcache) used by this factory
      */
     private $medium;
+
+    /**
+     * List of tasks currently registered by this Factory
+     * @var type
+     */
     public $tasks;
 
     public function __construct($mediumType = 'Memcache') {
@@ -32,6 +57,10 @@ class Factory {
 
     }
 
+    /**
+     * Executes all registered tasks
+     * @return array of Hydra\Task Returns the tasks that were registered, in their resolved form
+     */
     public function execute() {
 
         $this->log('Executing');
@@ -77,11 +106,16 @@ class Factory {
 
     }
 
-    public function getResults() {
+
+    /**
+     * Waits for workers and returns the results when ready or returns false on timeout
+     * @param int $maxWaitSecs Maximum number of seconds to wait for workers
+     * @return array of Hydra/Task|false
+     */
+    public function getResults($maxWaitSecs = 5) {
 
         $this->log('Started getResults()');
 
-        $maxWaitSecs = 5;
         $waitedSecs = 0;
         $defSleepMSecs = 100000;
 
@@ -135,18 +169,31 @@ class Factory {
     }
 
 
+    /**
+     * Adds a single task to the Factory register
+     * @param Task $task
+     */
     public function addTask(Task $task) {
 
         $this->tasks[$task->getGuid()] = $task;
     }
 
+    /**
+     * Adds an array of tasks to the Factory register
+     * @param array of Task $tasks
+     */
     public function addTasks($tasks) {
 
         foreach ($tasks as $task)
             $this->addTask($task);
     }
 
-    public function execInBackground($cmd) {
+
+    /**
+     * Windows- and Linux-safe background executor
+     * @param type $cmd
+     */
+    private function execInBackground($cmd) {
         if (substr(php_uname(), 0, 7) == "Windows") {
             pclose(popen("start /B " . $cmd, "r"));
         } else {
@@ -155,8 +202,8 @@ class Factory {
     }
 
     /**
-     *
-     * @return SqliteMedium
+     * Returns the medium used, instantiates if neccessary
+     * @return Medium\Base
      */
     private function getMedium() {
 
@@ -171,6 +218,10 @@ class Factory {
         return $this->medium;
     }
 
+    /**
+     * Logs a single string to the log
+     * @param string $string
+     */
     private function log($string) {
 
         if ($this->verbosity) {
