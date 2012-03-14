@@ -4,7 +4,9 @@ namespace Hydra;
 
 spl_autoload_register();
 
-set_time_limit(10);
+$runtime = 60; //script.php sleeps for 6 seconds to illustrate parrallel nature of multiprocessing
+
+set_time_limit($runtime);
 
 $start = microtime(true);
 
@@ -22,7 +24,7 @@ for ($i = 0; $i < 5; $i++) {
 }
 
 
-$mother = new Factory(3);
+$mother = new Factory($runtime);
 $mother->addTasks($tasks);
 
 $results = $mother->execute();

@@ -35,5 +35,5 @@ And it needs some way to config it.
 I want to make a Symfony2 Bundle out of this.
 
 ##Credit
-It's basically a PHP 5.3+ continuation of Jamie Estep's https://github.com/jestep/PHP-Multi-process/tree without the pid-stuff. I wouldn't be surprised if his version is faster.
+It's basically a PHP 5.3+ continuation of Jamie Estep's https://github.com/jestep/PHP-Multi-process without the pid-stuff. I wouldn't be surprised if his version is faster.
 But this is more extendable.
