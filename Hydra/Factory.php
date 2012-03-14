@@ -13,6 +13,9 @@ namespace Hydra;
 class Factory {
 
 
+    private $maxWaitSecs;
+
+
     /**
      * Level of verbosity
      * 0 = off
@@ -47,11 +50,13 @@ class Factory {
      */
     public $tasks;
 
-    public function __construct($mediumType = 'Memcache') {
+    public function __construct($maxWaitSecs = 5, $mediumType = 'Memcache') {
 
         $this->verbosity = 1;
 
         $this->mediumType = $mediumType;
+
+        $this->maxWaitSecs = $maxWaitSecs;
 
         $this->log('Constructed');
 
@@ -112,7 +117,7 @@ class Factory {
      * @param int $maxWaitSecs Maximum number of seconds to wait for workers
      * @return array of Hydra/Task|false
      */
-    public function getResults($maxWaitSecs = 5) {
+    public function getResults() {
 
         $this->log('Started getResults()');
 
@@ -120,7 +125,7 @@ class Factory {
         $defSleepMSecs = 100000;
 
 
-        while ($waitedSecs < $maxWaitSecs) {
+        while ($waitedSecs < $this->maxWaitSecs) {
 
             usleep($defSleepMSecs);
 
@@ -148,7 +153,7 @@ class Factory {
 
         }
 
-        $this->log("Timeout of $maxWaitSecs seconds reached, aborting.");
+        $this->log("Timeout of {$this->maxWaitSecs} seconds reached, aborting.");
 
         //$dbFile = sys_get_temp_dir() . '/hydra.db';
 

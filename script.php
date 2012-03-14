@@ -1,6 +1,6 @@
 <?php
 
-//sleep(4);
+sleep(6);
 
 $number = rand(0, 1000);
 

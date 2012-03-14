@@ -22,7 +22,7 @@ for ($i = 0; $i < 5; $i++) {
 }
 
 
-$mother = new Factory();
+$mother = new Factory(3);
 $mother->addTasks($tasks);
 
 $results = $mother->execute();
