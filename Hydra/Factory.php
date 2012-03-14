@@ -213,6 +213,8 @@ class Factory {
 
             $this->medium = new $name();
 
+            if (!$this->medium) throw new \Hydra\Exception('Medium not instantiated');
+
         }
 
         return $this->medium;
