@@ -30,29 +30,26 @@ class Worker {
 
         if ($task) {
 
-            $this->log('Retrieved task; executing');
+            $this->log('Retrieved task, executing');
 
             //. execute
             $output = Array();
-            //$return_var = 'something';
 
             $execString = 'php ' . $task->getScript() . $this->optToStr($task);
 
-            $this->log('Retrieved task; executing ' . $execString);
+            $this->log('Retrieved task; executing "' . $execString . '"');
 
             try {
 
                 exec($execString, &$output);
 
             } catch (Exception $exc) {
+
                 echo $exc->getTraceAsString();
+
+                $this->log('Worker exeception');
+
             }
-
-
-
-
-
-
             //. save results
 
             $this->log('Task finished, saving output');

@@ -14,7 +14,7 @@ class Logger {
 
     public function __construct() {
 
-        $this->handle = fopen('Hydra.log', 'a');
+        $this->handle = fopen(sys_get_temp_dir() . '/Hydra.log', 'a');
 
     }
 
@@ -23,7 +23,7 @@ class Logger {
 
         fwrite($this->handle, "$string\n");
 
-
+        return $this;
     }
 
     public function close() {

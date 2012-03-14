@@ -69,11 +69,15 @@ class Task {
 
         $this->output = $output;
 
+        return $this;
+
     }
 
     public function setResolved($bool = true) {
 
         $this->resolved = $bool;
+
+        return $this;
 
     }
 
@@ -85,11 +89,15 @@ class Task {
 
         $this->options[$arg_key] = $arg_value;
 
+        return $this;
+
     }
 
     public function setOptions($optionsArray) {
 
         $this->options = $optionsArray;
+
+        return $this;
 
     }
 
