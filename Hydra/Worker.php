@@ -12,9 +12,7 @@ class Worker {
 
     private $mediumType;
     private $logger;
-
     private $verbosity;
-
     private $medium;
 
     public function __construct($mediumType = 'Memcache', $task_id = null, $verbosity = 0) {
@@ -38,10 +36,21 @@ class Worker {
             $output = Array();
             //$return_var = 'something';
 
+            $execString = 'php ' . $task->getScript() . $this->optToStr($task);
 
-            //<=== HERE add processing of arguments
+            $this->log('Retrieved task; executing ' . $execString);
 
-            exec('php ' . $task->getScript(), &$output);
+            try {
+
+                exec($execString, &$output);
+
+            } catch (Exception $exc) {
+                echo $exc->getTraceAsString();
+            }
+
+
+
+
 
 
             //. save results
@@ -53,15 +62,10 @@ class Worker {
             $this->getMedium()->resolveTask($task);
 
             //. die
-
         } else {
 
             $this->log('Did not retrieve task, aborting worker');
-
         }
-
-
-
     }
 
     private function getMedium() {
@@ -77,19 +81,35 @@ class Worker {
         }
 
         return $this->medium;
-
     }
 
     private function log($string) {
 
         if ($this->verbosity) {
 
-            if (!$this->logger) $this->logger = new Logger;
+            if (!$this->logger)
+                $this->logger = new Logger;
 
             $this->logger->log('Hydra Worker : ' . $string);
-
         }
+    }
 
+    private function optToStr(Task $task) {
+
+        $string = '';
+
+        $options = $task->getOptions();
+
+        if (is_array($options))
+            foreach ($options as $key => $val) {
+
+                if (!is_int($key))
+                    $string .= ' ' . $key;
+
+                $string .= ' ' . $val;
+            }
+
+        return $string;
     }
 
 }

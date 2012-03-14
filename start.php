@@ -12,7 +12,12 @@ $start = microtime(true);
 
 for ($i = 0; $i < 5; $i++) {
 
-    $tasks[] = new Task(realpath(__DIR__ . '/script.php'), array('number' => 4));
+    $task = new Task(realpath(__DIR__ . '/script.php'));
+
+//    $task->addOption('--feed', '44');
+//    $task->addOption('--line', '153');
+
+    $tasks[] = $task;
 
 }
 
