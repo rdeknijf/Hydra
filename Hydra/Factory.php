@@ -95,7 +95,7 @@ class Factory {
 
             //. dispatch worker
 
-            $this->execInBackground('php Hydra/WorkerBootstrap.php -m '. $this->mediumType .' -t ' . $task->getGuid() . ' -v 1');
+            $this->execInBackground('php ' . __DIR__  . '/WorkerBootstrap.php -m '. $this->mediumType .' -t ' . $task->getGuid() . ' -v 1');
 
             //usleep($sleep);
 
@@ -239,7 +239,11 @@ class Factory {
 
             }
 
-            $this->logger->log('Hydra Factory: ' . $string);
+            $string = 'Hydra Factory: ' . $string;
+
+            $this->logger->log($string);
+
+            echo $string . "\n";
 
         }
 
