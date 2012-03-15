@@ -95,7 +95,7 @@ class Factory {
 
             //. dispatch worker
 
-            $this->execInBackground('php ' . __DIR__  . '/WorkerBootstrap.php -m '. $this->mediumType .' -t ' . $task->getGuid() . ' -v 1');
+            $this->execInBackground('php ' . __DIR__  . '/../WorkerBootstrap.php -m '. $this->mediumType .' -t ' . $task->getGuid() . ' -v 1');
 
             //usleep($sleep);
 

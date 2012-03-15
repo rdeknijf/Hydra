@@ -30,6 +30,6 @@ $mother->addTasks($tasks);
 
 $results = $mother->execute();
 
-//var_dump($results);
+var_dump($results);
 
 var_dump(microtime(true) - $start);

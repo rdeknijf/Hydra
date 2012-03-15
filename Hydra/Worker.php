@@ -42,13 +42,11 @@ class Worker {
             try {
 
                 exec($execString, &$output);
-
             } catch (Exception $exc) {
 
                 echo $exc->getTraceAsString();
 
                 $this->log('Worker exeception');
-
             }
             //. save results
 
@@ -67,14 +65,20 @@ class Worker {
 
     private function getMedium() {
 
+        switch ($this->mediumType) {
+            case 'Sqlite3':
+
+                $this->medium = new Medium\Sqlite3;
+
+                break;
+
+            default:
 
 
-        if (!$this->medium) {
+                $this->medium = new Medium\Memcache;
 
-            $name = 'Hydra\\Medium\\' . $this->mediumType;
+                break;
 
-            $this->medium = new $name();
-//var_dump($this->mediumType);
         }
 
         return $this->medium;
