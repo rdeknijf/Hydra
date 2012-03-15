@@ -30,14 +30,14 @@ class Worker {
 
         if ($task) {
 
-            $this->log('Retrieved task, executing');
+            $this->log('Retrieved task');
 
             //. execute
             $output = Array();
 
-            $execString = 'php ' . $task->getScript() . $this->optToStr($task);
+            $execString = $task->getCommand() . $this->optToStr($task);
 
-            $this->log('Retrieved task; executing "' . $execString . '"');
+            $this->log('Executing "' . $execString . '"');
 
             try {
 

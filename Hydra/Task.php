@@ -11,7 +11,7 @@ class Task {
 
     public $guid;
 
-    public $script;
+    public $command;
 
     public $options;
 
@@ -19,28 +19,28 @@ class Task {
 
     public $resolved = false;
 
-    public function __construct($script = null, $options = null) {
+    public function __construct($command = null, $options = null) {
 
         $this->guid = $this->generateGuid();
 
-        $this->setScript($script);
+        $this->setCommand($command);
 
         $this->setOptions($options);
 
     }
 
     /**
-     * @param string $script Absolute path to script
+     * @param string $command Command to execute
      */
-    public function setScript($script) {
+    public function setCommand($command) {
 
-        $this->script = $script;
+        $this->command = $command;
 
     }
 
-    public function getScript() {
+    public function getCommand() {
 
-        return $this->script;
+        return $this->command;
 
     }
 

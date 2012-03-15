@@ -14,7 +14,8 @@ $start = microtime(true);
 
 for ($i = 0; $i < 5; $i++) {
 
-    $task = new Task(realpath(__DIR__ . '/script.php'));
+    $task = new Task('dir');
+//    $task = new Task('php ' . realpath(__DIR__ . '/script.php'));
 
 //    $task->addOption('--feed', '44');
 //    $task->addOption('--line', '153');
@@ -29,6 +30,6 @@ $mother->addTasks($tasks);
 
 $results = $mother->execute();
 
-var_dump($results);
+//var_dump($results);
 
 var_dump(microtime(true) - $start);
