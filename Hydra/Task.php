@@ -1,4 +1,5 @@
 <?php
+
 namespace Hydra;
 
 /**
@@ -10,13 +11,9 @@ namespace Hydra;
 class Task {
 
     public $guid;
-
     public $command;
-
     public $options;
-
     public $output;
-
     public $resolved = false;
 
     public function __construct($command = null, $options = null) {
@@ -26,7 +23,6 @@ class Task {
         $this->setCommand($command);
 
         $this->setOptions($options);
-
     }
 
     /**
@@ -35,34 +31,26 @@ class Task {
     public function setCommand($command) {
 
         $this->command = $command;
-
     }
 
     public function getCommand() {
 
         return $this->command;
-
     }
-
-
 
     public function getGuid() {
 
         return $this->guid;
     }
 
-
     private function generateGuid() {
 
         return md5(uniqid('', true));
-
-
     }
 
     public function getOutput() {
 
         return $this->output;
-
     }
 
     public function setOutput($output) {
@@ -70,7 +58,6 @@ class Task {
         $this->output = $output;
 
         return $this;
-
     }
 
     public function setResolved($bool = true) {
@@ -78,7 +65,6 @@ class Task {
         $this->resolved = $bool;
 
         return $this;
-
     }
 
     /**
@@ -87,10 +73,12 @@ class Task {
      */
     public function addOption($arg_key, $arg_value = null) {
 
-        $this->options[$arg_key] = $arg_value;
+        if ($arg_value === null)
+            $this->options[] = $arg_key;
+        else
+            $this->options[$arg_key] = $arg_value;
 
         return $this;
-
     }
 
     public function setOptions($optionsArray) {
@@ -98,15 +86,11 @@ class Task {
         $this->options = $optionsArray;
 
         return $this;
-
     }
-
 
     public function getOptions() {
 
         return $this->options;
-
-
     }
 
 }
