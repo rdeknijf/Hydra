@@ -243,7 +243,7 @@ class Factory {
 
             $this->logger->log($string);
 
-            echo $string . "\n";
+            echo "\n" . $string;
 
         }
 
